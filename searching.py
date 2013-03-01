@@ -8,17 +8,21 @@ import sys
 import os
 import math
 from graphing import Graph
-from whoosh import 
+import getpass
+import re
 class Functionality(object):
-    def initSearchEngine():
-        """ Do all necessary things to perform searching in future """
+    def compileRegex(pattern):
+        translated = ''
+        for letter in pattern:
+            if letter == '?':
+                translated = translated+'.'
+            elif letter == '.':
+                translated = translated+r'\.'
+            else:
+                translated = translated+letter
+        return translated
+    def checkIfMatches(name):
         pass
-    def indexFilesIn(path):
-        """ Indexes all files in path """
-        for root,dirs,files in os.walk(path):
-            for file in files:
-                if not os.path.islink(root+'/'+file):
-                    
     def dirSize(path):
         size = 0
         for root,dirs,files in os.walk(path):
@@ -103,8 +107,9 @@ class Main(QMainWindow):
                 self.ui.tableWidget.setItem(counter,1,QTableWidgetItem(li[0][0]))
                 self.ui.tableWidget.setCellWidget(counter,2,QPushButton("Open"))
                 counter+=1
-app = QApplication(sys.argv)
-print('DirsSizes_1', Functionality.dirsSizes_1('/home/jurek/Gity'))
-main=Main()
-main.show()
-sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    print('DirsSizes_1', Functionality.dirsSizes_1('/home/jurek/Gity'))
+    main=Main()
+    main.show()
+    sys.exit(app.exec_())
