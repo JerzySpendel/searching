@@ -10,7 +10,11 @@ import math
 from graphing import Graph
 import getpass
 import re
-class Functionality(object):
+class Func(object):
+    
+    """Name func is from Functionality which means set of utilities
+    used from various places of program"""
+    reg = None
     def compileRegex(pattern):
         translated = ''
         for letter in pattern:
@@ -18,11 +22,11 @@ class Functionality(object):
                 translated = translated+'.'
             elif letter == '.':
                 translated = translated+r'\.'
+            elif letter == '*':
+                translated = translated+r'.*'
             else:
                 translated = translated+letter
-        return translated
-    def checkIfMatches(name):
-        pass
+        Func.reg = re.compile(translated)
     def dirSize(path):
         size = 0
         for root,dirs,files in os.walk(path):
@@ -39,9 +43,12 @@ class Functionality(object):
         """ Returns list of subdirectories in path as given:
             [(dir1,(path_to_dir1,sizeOfDir1inInt))...(dirN,(path_to_dirN,sizeOfDirNinInt))]            
             """
-        dirs  = os.listdir(path)
-        sizes = [(x, Functionality.dirSize(path+'/'+x)) for x in dirs]
-        return sizes
+        try:
+            dirs  = os.listdir(path)
+            sizes = [(x, Functionality.dirSize(path+'/'+x)) for x in dirs]
+            return sizes
+        except FileNotFoundError:
+            print("Theres not such file or directory")
     def makeShorter(size):
         """ Changes size given as Integer to string like: 10MB,10KB or 10GB """
         if size>=10**9:
@@ -56,6 +63,7 @@ class Functionality(object):
         else:
           return str(size)
     def determineSize(size):
+        """Returns various list <width,height> for generating rectangles"""
         if size>10**10:
             return 200,200
         elif size>10**9:
@@ -66,7 +74,12 @@ class Functionality(object):
             return 100, 20
         else:
             return 10, 10
-
+class MyButton(QPushButton):
+    def __init__(self,name,path):
+        QPushButton.__init__(self,name)
+        self.path = path
+    def openMe(self):
+        os.system('xdg-open "%s"' % self.path)
 class Main(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -75,41 +88,35 @@ class Main(QMainWindow):
         
         QObject.connect(self.ui.pushButton,SIGNAL('clicked()'),self.setB)
         QObject.connect(self.ui.pushButton_2,SIGNAL('clicked()'),self.search)
-        
-        self.testCells()
+        self.buts = []
     def testCells(self):
         self.ui.tableWidget.setRowCount(self.ui.tableWidget.rowCount()+1)
-        self.ui.tableWidget.setCellWidget(0,0,QPushButton("OPEN"))
+        self.ui.tableWidget.setCellWidget(0,1,QPushButton("OPEN"))
     def setB(self):
         self.ui.lineEdit.setText(QFileDialog.getExistingDirectory())
-    def searchF(self,startpoint,ext):
-        dirs = os.listdir(startpoint)
-        c_dirs = [dirr for dirr in dirs if os.path.isdir(os.path.join(startpoint,dirr))]
-        filess = []
-        for root,dirs,files in os.walk(startpoint):
-            for file in files:
-                if file.endswith(ext):
-                    filess.append(file)
-        return(filess)
     def search(self):
-        if self.ui.lineEdit_2.text() == '':
-            dialog = QDialog()
-            Ui_Dialog().setupUi(dialog)
-            dialog.exec_()
-        else:
-            found = self.searchF(self.ui.lineEdit.text(),self.ui.lineEdit_2.text())
-            found = [[os.path.splitext(found)] for found in found]
-            print(found)
-            counter = 0
-            for li in found:
-                self.ui.tableWidget.setRowCount(self.ui.tableWidget.rowCount()+1)
-                self.ui.tableWidget.setItem(counter,0,QTableWidgetItem(li[0][1]))
-                self.ui.tableWidget.setItem(counter,1,QTableWidgetItem(li[0][0]))
-                self.ui.tableWidget.setCellWidget(counter,2,QPushButton("Open"))
-                counter+=1
+        Func.compileRegex(self.ui.lineEdit_2.text())
+        for root,dirs,files in os.walk(self.ui.lineEdit.text()):
+            for file in files:
+                if Func.reg.match(file):
+                    counter = self.ui.tableWidget.rowCount()-1
+                    text = os.path.splitext(root+'/'+file)
+                    name = text[0].split('/')
+                    name = name[len(name)-1]
+                    ext = text[1]
+                    print(text)
+                    self.ui.tableWidget.setRowCount(self.ui.tableWidget.rowCount()+1)
+                    self.ui.tableWidget.setItem(counter,0,QTableWidgetItem(ext))
+                    self.ui.tableWidget.setItem(counter,1,QTableWidgetItem(name))
+                    baton = MyButton("Open",text[0]+text[1])
+                    self.buts.append(baton)
+                    which = len(self.buts)-1
+                    QObject.connect(self.buts[which],SIGNAL('clicked()'),self.buts[which].openMe)
+                    
+                    self.ui.tableWidget.setCellWidget(counter,2,self.buts[which])
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    print('DirsSizes_1', Functionality.dirsSizes_1('/home/jurek/Gity'))
+    print('DirsSizes_1', Func.dirsSizes_1('/home/jurek/Gity'))
     main=Main()
     main.show()
     sys.exit(app.exec_())
