@@ -1,0 +1,6 @@
+__init__.py -> file for relatively import
+dialog.py -> some dialogs for exceptions
+graph.py -> nothing worth to read
+graphing.py -> mechanism for displaying and doing all necessary things to display visualisation of size of files and directories
+main.py -> Main window compiled by pyuic4 from searching.ui
+searching.py -> Mechanism for searching files and displaying it in widget
