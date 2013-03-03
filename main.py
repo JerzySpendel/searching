@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'searching.ui'
 #
-# Created: Sat Mar  2 18:04:03 2013
+# Created: Sat Mar  2 21:26:42 2013
 #      by: PyQt4 UI code generator 4.9.6
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,14 +58,23 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(1, item)
         item = QtGui.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(2, item)
+        self.label_3 = QtGui.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(230, 40, 281, 16))
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.pushButton_3 = QtGui.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(100, 70, 80, 20))
+        self.pushButton_3.setObjectName(_fromUtf8("pushButton_3"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 516, 18))
         self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menuSettings = QtGui.QMenu(self.menubar)
+        self.menuSettings.setObjectName(_fromUtf8("menuSettings"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
+        self.menubar.addAction(self.menuSettings.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -82,4 +91,7 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Name", None))
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Action", None))
+        self.label_3.setText(_translate("MainWindow", "\"*\" for all sequences and \"?\" for one character", None))
+        self.pushButton_3.setText(_translate("MainWindow", "Visualisation", None))
+        self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
 
